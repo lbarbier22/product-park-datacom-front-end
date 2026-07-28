@@ -24,16 +24,17 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.store'
 
+const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
 const login = ref('')
 const password = ref('')
 const loading = ref(false)
-const error = ref('')
+const error = ref(route.query.message || '')
 
 async function onSubmit() {
 	error.value = ''
