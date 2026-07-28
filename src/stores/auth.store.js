@@ -1,4 +1,14 @@
 import { defineStore } from 'pinia'
+import { jwtDecode } from 'jwt-decode'
+import { login as loginApi } from '../services/api'
+
+const decodeToken = (token) => {
+  try {
+    return jwtDecode(token)
+  } catch (error) {
+    return null
+  }
+}
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -8,20 +18,28 @@ export const useAuthStore = defineStore('auth', {
     lastname: '',
     role: '',
   }),
+  getters: {
+    isAuthenticated: (state) => !!state.token,
+  },
   actions: {
-    loginUser(payload) {
-      this.token = payload.token || ''
+    async login(credentials) {
+      const response = await loginApi(credentials)
+      const payload = response.data || {}
+      const token = payload.token || ''
+
+      this.token = token
       this.login = payload.login || ''
       this.firstname = payload.firstname || ''
       this.lastname = payload.lastname || ''
       this.role = payload.role || ''
 
-      if (this.token) {
-        localStorage.setItem('token', this.token)
-      } else {
-        localStorage.removeItem('token')
+      if (token) {
+        localStorage.setItem('token', token)
       }
+
+      return payload
     },
+
     logout() {
       this.token = ''
       this.login = ''
@@ -30,5 +48,24 @@ export const useAuthStore = defineStore('auth', {
       this.role = ''
       localStorage.removeItem('token')
     },
-  }),
+
+    restoreFromLocalStorage() {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        return
+      }
+
+      const decoded = decodeToken(token)
+      if (!decoded) {
+        this.logout()
+        return
+      }
+
+      this.token = token
+      this.login = decoded.sub || ''
+      this.firstname = decoded.firstname || ''
+      this.lastname = decoded.lastname || ''
+      this.role = decoded.role || ''
+    },
+  },
 })
