@@ -43,7 +43,7 @@ function logout() {
       <RouterLink to="/">Accueil</RouterLink>
       <RouterLink v-if="!isAuthenticated" to="/login">Connexion</RouterLink>
       <RouterLink to="/products">Produits</RouterLink>
-      <button v-if="isAuthenticated" type="button" class="new-product-btn" @click="createNewProduct">Nouveau produit</button>
+      <button v-if="auth.role === 'ADMIN'" type="button" class="new-product-btn" @click="createNewProduct">Nouveau produit</button>
       <button v-if="isAuthenticated" type="button" class="logout-btn" @click="logout">Déconnexion</button>
     </nav>
   </header>
