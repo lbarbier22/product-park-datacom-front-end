@@ -1,17 +1,11 @@
 <script setup>
-import { RouterView, RouterLink } from 'vue-router'
+import { RouterView } from 'vue-router'
+import AppHeader from './components/AppHeader.vue'
 </script>
 
 <template>
   <div class="app-shell">
-    <header class="app-header">
-      <h1>DATACOM Frontend</h1>
-      <nav>
-        <RouterLink to="/">Accueil</RouterLink>
-        <RouterLink to="/login">Connexion</RouterLink>
-        <RouterLink to="/products">Produits</RouterLink>
-      </nav>
-    </header>
+    <AppHeader />
 
     <main class="app-main">
       <RouterView />
