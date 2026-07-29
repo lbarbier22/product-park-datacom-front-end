@@ -48,5 +48,9 @@ api.interceptors.response.use(
 )
 
 export const login = (credentials) => api.post('/auth/login', credentials)
+export const getProducts = (statusFilter = '') => {
+  const params = statusFilter ? { status: statusFilter } : {}
+  return api.get('/products', { params })
+}
 
 export default api
