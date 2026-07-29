@@ -24,8 +24,6 @@
     "vitest": "^4.1.10"
   },
   "vitest": {
-    "test": {
-      "environment": "jsdom"
-    }
+    "environment": "jsdom"
   }
 }
