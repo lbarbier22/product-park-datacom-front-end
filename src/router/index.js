@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth.store'
 import HomeView from '../views/HomeView.vue'
 
-const routes = [
+export const routes = [
   {
     path: '/',
     name: 'home',
@@ -39,24 +39,30 @@ const routes = [
   },
 ]
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-})
+export function createAppRouter() {
+  const router = createRouter({
+    history: createWebHistory(),
+    routes,
+  })
 
-router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
-  const authStore = useAuthStore()
+  router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token')
+    const authStore = useAuthStore()
 
-  if (to.meta.requiresAuth && !token) {
-    return next({ path: '/login' })
-  }
+    if (to.meta.requiresAuth && !token) {
+      return next({ path: '/login' })
+    }
 
-  if (to.meta.role && authStore.role !== to.meta.role) {
-    return next({ path: '/products' })
-  }
+    if (to.meta.role && authStore.role !== to.meta.role) {
+      return next({ path: '/products' })
+    }
 
-  next()
-})
+    next()
+  })
+
+  return router
+}
+
+const router = createAppRouter()
 
 export default router

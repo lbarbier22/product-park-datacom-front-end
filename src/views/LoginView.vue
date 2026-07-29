@@ -1,57 +1,61 @@
 <template>
-	<section class="login-view">
-		<h1>Connexion</h1>
+  <section class="login-view">
+    <h1>Connexion</h1>
 
-		<form @submit.prevent="onSubmit" class="login-form">
-			<div class="field">
-				<label for="login">Login</label>
-				<input id="login" v-model="login" autocomplete="username" />
-			</div>
+    <form @submit.prevent="onSubmit" class="login-form">
+      <div class="field">
+        <label for="login">Login</label>
+        <input id="login" v-model="login" autocomplete="username" />
+      </div>
 
-			<div class="field">
-				<label for="password">Mot de passe</label>
-				<input id="password" type="password" v-model="password" autocomplete="current-password" />
-			</div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" v-model="password" autocomplete="current-password" />
+      </div>
 
-			<div v-if="error" class="error">{{ error }}</div>
-
-			<button type="submit" :disabled="loading">
-				{{ loading ? 'Connexion...' : 'Se connecter' }}
-			</button>
-		</form>
-	</section>
+      <button type="submit" :disabled="uiStore.loading">
+        {{ uiStore.loading ? 'Connexion...' : 'Se connecter' }}
+      </button>
+    </form>
+  </section>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.store'
+import { useUiStore } from '../stores/ui.store'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const uiStore = useUiStore()
 
 const login = ref('')
 const password = ref('')
-const loading = ref(false)
-const error = ref(route.query.message || '')
+
+const initialMessage = route.query.message
+if (typeof initialMessage === 'string' && initialMessage) {
+  uiStore.setError(initialMessage)
+}
 
 async function onSubmit() {
-	error.value = ''
-	if (!login.value || !password.value) {
-		error.value = 'Veuillez saisir le login et le mot de passe.'
-		return
-	}
+  uiStore.clearMessages()
+  if (!login.value || !password.value) {
+    uiStore.setError('Veuillez saisir le login et le mot de passe.')
+    return
+  }
 
-	loading.value = true
-	try {
-		await auth.login({ login: login.value, password: password.value })
-		router.push('/products')
-	} catch (e) {
-		error.value = e?.response?.data?.message || 'Identifiants incorrects'
-	} finally {
-		loading.value = false
-	}
+  uiStore.setLoading(true)
+  try {
+    await auth.login({ login: login.value, password: password.value })
+    router.push('/products')
+  } catch (e) {
+    const message = e?.response?.data?.message || 'Identifiants incorrects'
+    uiStore.setError(message)
+  } finally {
+    uiStore.setLoading(false)
+  }
 }
 </script>
 
@@ -60,6 +64,5 @@ async function onSubmit() {
 .field { margin-bottom: 1rem; }
 label { display:block; margin-bottom: .25rem; }
 input { width:100%; padding:.5rem; box-sizing:border-box }
-.error { color: #b00020; margin-bottom: .5rem }
 button[disabled] { opacity: .6 }
 </style>

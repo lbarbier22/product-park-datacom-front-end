@@ -1,73 +1,73 @@
-<template>
-  <header class="app-header">
-    <div class="brand">
-      <h1>DATACOM Frontend</h1>
-    </div>
-
-    <nav class="main-nav">
-      <RouterLink to="/">Accueil</RouterLink>
-      <RouterLink to="/products">Produits</RouterLink>
-      <RouterLink v-if="isAdmin" to="/products/new">Nouveau produit</RouterLink>
-    </nav>
-
-    <div class="user-panel" v-if="isAuthenticated">
-      <span>{{ userFullname }} ({{ authStore.role }})</span>
-      <button type="button" @click="logout">Déconnexion</button>
-    </div>
-
-    <div class="auth-link" v-else>
-      <RouterLink to="/login">Connexion</RouterLink>
-    </div>
-  </header>
-</template>
-
 <script setup>
 import { computed } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.store'
 
-const authStore = useAuthStore()
+const auth = useAuthStore()
 const router = useRouter()
 
-const isAuthenticated = computed(() => authStore.isAuthenticated)
-const isAdmin = computed(() => authStore.role === 'ADMIN')
-const userFullname = computed(() => `${authStore.firstname || ''} ${authStore.lastname || ''}`.trim())
+const isAuthenticated = computed(() => auth.isAuthenticated)
+const userName = computed(() => [auth.firstname, auth.lastname].filter(Boolean).join(' ') || auth.login)
 
-const logout = () => {
-  authStore.logout()
+function logout() {
+  auth.logout()
   router.push('/login')
 }
 </script>
 
+<template>
+  <header class="app-header">
+    <div class="brand-block">
+      <h1>DATACOM Frontend</h1>
+      <p v-if="isAuthenticated">Bonjour {{ userName }}</p>
+    </div>
+
+    <nav class="nav-links">
+      <RouterLink to="/">Accueil</RouterLink>
+      <RouterLink v-if="!isAuthenticated" to="/login">Connexion</RouterLink>
+      <RouterLink to="/products">Produits</RouterLink>
+      <RouterLink v-if="isAuthenticated" to="/products/new">Nouveau produit</RouterLink>
+      <button v-if="isAuthenticated" type="button" class="logout-btn" @click="logout">Déconnexion</button>
+    </nav>
+  </header>
+</template>
+
 <style scoped>
 .app-header {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   justify-content: space-between;
-  padding: 1rem;
-  background: #f5f7fb;
-  border-bottom: 1px solid #dfe3ea;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #0f172a;
+  color: #fff;
 }
-.brand h1 {
+.brand-block h1 {
   margin: 0;
   font-size: 1.2rem;
 }
-.main-nav {
+.brand-block p {
+  margin: 0.2rem 0 0;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+.nav-links {
   display: flex;
   gap: 1rem;
   align-items: center;
 }
-.user-panel,
-.auth-link {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-button {
-  padding: 0.4rem 0.8rem;
-  border: 1px solid #6578a0;
-  background: white;
+.nav-links a,
+.logout-btn {
+  color: #fff;
+  text-decoration: none;
+  background: transparent;
+  border: none;
   cursor: pointer;
+  font: inherit;
+}
+.nav-links a.router-link-active {
+  font-weight: 700;
+}
+.logout-btn {
+  padding: 0;
 }
 </style>
