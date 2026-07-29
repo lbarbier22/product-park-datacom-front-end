@@ -3,10 +3,10 @@
     <h2>Étape 2 - Classification</h2>
 
     <form class="step-form" @submit.prevent="emitNext">
-      <FormField id="category" v-model="localForm.category" label="Catégorie" :required="true" :error="errors.category" />
-      <FormField id="subCategory" v-model="localForm.subCategory" label="Sous-catégorie" />
-      <FormField id="manufacturer" v-model="localForm.manufacturer" label="Fabricant" :required="true" :maxlength="150" :error="errors.manufacturer" />
-      <FormField id="country" v-model="localForm.country" label="Pays" type="select" :required="true" :options="countryOptions" :error="errors.country" />
+      <FormField id="category" :modelValue="formData.category" label="Catégorie" :required="true" :error="errors.category" @update:modelValue="value => updateField('category', value)" />
+      <FormField id="subCategory" :modelValue="formData.subCategory" label="Sous-catégorie" @update:modelValue="value => updateField('subCategory', value)" />
+      <FormField id="manufacturer" :modelValue="formData.manufacturer" label="Fabricant" :required="true" :maxlength="150" :error="errors.manufacturer" @update:modelValue="value => updateField('manufacturer', value)" />
+      <FormField id="country" :modelValue="formData.country" label="Pays" type="select" :required="true" :options="countryOptions" :error="errors.country" @update:modelValue="value => updateField('country', value)" />
 
       <div v-if="errors.server" class="server-error">{{ errors.server }}</div>
       <button type="submit" :disabled="isSubmitting">Suivant</button>
@@ -15,7 +15,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import FormField from './FormField.vue'
 
 const props = defineProps({
@@ -35,10 +34,9 @@ const countryOptions = [
   { value: 'USA', label: 'USA' },
 ]
 
-const localForm = computed({
-  get: () => props.formData,
-  set: (value) => emit('update', value),
-})
+function updateField(field, value) {
+  emit('update', { [field]: value })
+}
 
 function emitNext() {
   emit('next')
