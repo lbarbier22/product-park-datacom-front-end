@@ -52,5 +52,6 @@ export const getProducts = (statusFilter = '') => {
   const params = statusFilter ? { status: statusFilter } : {}
   return api.get('/products', { params })
 }
+export const createProduct = () => api.post('/products')
 
 export default api
