@@ -1,6 +1,7 @@
 <template>
   <section class="product-form-view">
     <h1>Formulaire produit</h1>
+    <RejectionBanner :reason="rejectionReason" />
     <StepIndicator :current-step="currentStep" />
 
     <component
@@ -19,6 +20,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import StepIndicator from '../components/StepIndicator.vue'
+import RejectionBanner from '../components/RejectionBanner.vue'
 import ProductStep1 from '../components/ProductStep1.vue'
 import ProductStep2 from '../components/ProductStep2.vue'
 import ProductStep3 from '../components/ProductStep3.vue'
@@ -48,6 +50,9 @@ const formData = ref({
 })
 const errors = ref({})
 const isSubmitting = ref(false)
+// Motif de refus renvoyé par l'API tant que le produit n'a pas été re-soumis
+// (le backend ne le vide qu'après la re-soumission du step 4)
+const rejectionReason = ref('')
 
 const currentStepComponent = computed(() => {
   switch (currentStep.value) {
@@ -86,6 +91,8 @@ function validateStep3() {
 }
 
 async function goNext() {
+  if (isSubmitting.value) return
+
   let valid = false
   if (currentStep.value === 1) valid = validateStep1()
   if (currentStep.value === 2) valid = validateStep2()
@@ -93,6 +100,7 @@ async function goNext() {
 
   if (!valid) return
 
+  isSubmitting.value = true
   try {
     await api.put(`/products/${productId.value}/step/${currentStep.value}?next=true`, formData.value)
     currentStep.value += 1
@@ -100,10 +108,13 @@ async function goNext() {
     errors.value = {
       server: error?.response?.data?.message || 'Une erreur est survenue lors de la sauvegarde.',
     }
+  } finally {
+    isSubmitting.value = false
   }
 }
 
 async function submitProduct() {
+  if (isSubmitting.value) return
   isSubmitting.value = true
   try {
     await api.put(`/products/${productId.value}/step/4?next=true`, formData.value)
@@ -125,7 +136,16 @@ onMounted(async () => {
       ...formData.value,
       ...data,
     }
-    currentStep.value = Number(data.currentStep || 1)
+    rejectionReason.value = data.rejectionReason || ''
+
+    // Le backend ne remet le statut/step à zéro qu'au premier PUT.
+    // Si on arrive ici avec un produit encore REJECTED, on force
+    // l'affichage au step 1 dès le chargement initial (US-05.2).
+    if (data.status === 'REJECTED') {
+      currentStep.value = 1
+    } else {
+      currentStep.value = Number(data.currentStep || 1)
+    }
   } catch (error) {
     currentStep.value = 1
   }
