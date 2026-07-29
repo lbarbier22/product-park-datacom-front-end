@@ -2,6 +2,17 @@
   <section class="product-list-view">
     <div class="header-row">
       <h1>Liste des produits</h1>
+
+      <label class="filter-wrap">
+        <span>Statut</span>
+        <select v-model="selectedStatus" @change="refreshProducts">
+          <option value="">Tous</option>
+          <option value="DRAFT">DRAFT</option>
+          <option value="PENDING">PENDING</option>
+          <option value="VALIDATED">VALIDATED</option>
+          <option value="REJECTED">REJECTED</option>
+        </select>
+      </label>
     </div>
 
     <div v-if="loading" class="state">Chargement…</div>
@@ -19,12 +30,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="product in products"
-          :key="product.id"
-          class="product-row"
-          @click="goToProduct(product)"
-        >
+        <tr v-for="product in products" :key="product.id" class="product-row">
           <td>{{ product.id }}</td>
           <td>{{ product.name }}</td>
           <td>
@@ -41,25 +47,25 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/auth.store'
 import { useProductStore } from '../stores/product.store'
 
-const router = useRouter()
 const productStore = useProductStore()
-const authStore = useAuthStore()
-
 const loading = ref(true)
+const selectedStatus = ref('')
 const products = computed(() => productStore.products)
 
 onMounted(async () => {
+  await refreshProducts()
+})
+
+async function refreshProducts() {
   loading.value = true
   try {
-    await productStore.fetchList('')
+    await productStore.fetchList(selectedStatus.value)
   } finally {
     loading.value = false
   }
-})
+}
 
 function formatDate(value) {
   if (!value) return '-'
@@ -79,18 +85,6 @@ function statusClass(status) {
       return 'neutral'
   }
 }
-
-function goToProduct(product) {
-  const role = authStore.role
-  const editableByAdmin = product.status === 'DRAFT' || product.status === 'REJECTED'
-
-  if (role === 'ADMIN' && editableByAdmin) {
-    router.push(`/products/${product.id}/edit`)
-    return
-  }
-
-  router.push(`/products/${product.id}/review`)
-}
 </script>
 
 <style scoped>
@@ -101,7 +95,16 @@ function goToProduct(product) {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   margin-bottom: 1rem;
+}
+.filter-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.filter-wrap select {
+  padding: 0.4rem 0.6rem;
 }
 .product-table {
   width: 100%;
@@ -112,12 +115,6 @@ function goToProduct(product) {
   padding: 0.75rem;
   border-bottom: 1px solid #e2e8f0;
   text-align: left;
-}
-.product-row {
-  cursor: pointer;
-}
-.product-row:hover {
-  background: #f8fafc;
 }
 .status-badge {
   display: inline-block;
