@@ -13,16 +13,16 @@ const userName = computed(() => [auth.firstname, auth.lastname].filter(Boolean).
 async function createNewProduct() {
   try {
     const response = await createProduct()
-    const productId = response?.data?.id
+    const productId = response?.data?.id || response?.data?.productId || response?.data?.product?.id
 
     if (productId) {
-      router.push(`/products/${productId}/edit`)
+      router.push({ name: 'product-edit', params: { id: productId } })
       return
     }
 
-    router.push('/products')
+    window.alert('Impossible de créer le produit : identifiant manquant.')
   } catch (error) {
-    router.push('/products')
+    window.alert('Erreur lors de la création du produit. Veuillez réessayer.')
   }
 }
 

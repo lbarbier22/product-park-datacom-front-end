@@ -3,9 +3,9 @@
     <h2>Étape 1 - Informations générales</h2>
 
     <form class="step-form" @submit.prevent="emitNext">
-      <FormField id="name" v-model="localForm.name" label="Nom" :required="true" :maxlength="100" :error="errors.name" />
-      <FormField id="reference" v-model="localForm.reference" label="Référence" :required="true" :error="errors.reference" />
-      <FormField id="description" v-model="localForm.description" label="Description" type="textarea" :maxlength="1000" :rows="4" :error="errors.description" />
+      <FormField id="name" :modelValue="formData.name" label="Nom" :required="true" :maxlength="100" :error="errors.name" @update:modelValue="value => updateField('name', value)" />
+      <FormField id="reference" :modelValue="formData.reference" label="Référence" :required="true" :error="errors.reference" @update:modelValue="value => updateField('reference', value)" />
+      <FormField id="description" :modelValue="formData.description" label="Description" type="textarea" :maxlength="1000" :rows="4" :error="errors.description" @update:modelValue="value => updateField('description', value)" />
 
       <div v-if="errors.server" class="server-error">{{ errors.server }}</div>
       <button type="submit" :disabled="isSubmitting">Suivant</button>
@@ -14,7 +14,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import FormField from './FormField.vue'
 
 const props = defineProps({
@@ -25,10 +24,9 @@ const props = defineProps({
 
 const emit = defineEmits(['update', 'next'])
 
-const localForm = computed({
-  get: () => props.formData,
-  set: (value) => emit('update', value),
-})
+function updateField(field, value) {
+  emit('update', { [field]: value })
+}
 
 function emitNext() {
   emit('next')
