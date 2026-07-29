@@ -53,5 +53,10 @@ export const getProducts = (statusFilter = '') => {
   return api.get('/products', { params })
 }
 export const createProduct = () => api.post('/products')
+export const getProduct = (id) => api.get(`/products/${id}`)
+export const validateProduct = (id) => api.post(`/products/${id}/validate`)
+// NB: le nom du champ "reason" est une supposition - à confirmer avec le contrat
+// de l'API backend (ex: reason / rejectionReason / motif).
+export const rejectProduct = (id, reason) => api.post(`/products/${id}/reject`, { reason })
 
 export default api

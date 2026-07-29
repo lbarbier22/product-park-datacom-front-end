@@ -30,7 +30,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="product in products" :key="product.id" class="product-row">
+        <tr
+          v-for="product in products"
+          :key="product.id"
+          class="product-row"
+          @click="goToProduct(product)"
+        >
           <td>{{ product.id }}</td>
           <td>{{ product.name }}</td>
           <td>
@@ -47,9 +52,13 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useProductStore } from '../stores/product.store'
+import { useAuthStore } from '../stores/auth.store'
 
+const router = useRouter()
 const productStore = useProductStore()
+const authStore = useAuthStore()
 const loading = ref(true)
 const selectedStatus = ref('')
 const products = computed(() => productStore.products)
@@ -65,6 +74,20 @@ async function refreshProducts() {
   } finally {
     loading.value = false
   }
+}
+
+// US-07.1 : un ADMIN ne doit jamais atterrir sur le formulaire d'édition
+// pour un produit que le backend refuserait de modifier (409 sur PENDING/VALIDATED).
+// Seuls DRAFT et REJECTED sont éditables par l'ADMIN ; tout le reste part en consultation.
+function goToProduct(product) {
+  const editableStatuses = ['DRAFT', 'REJECTED']
+
+  if (authStore.role === 'ADMIN' && editableStatuses.includes(product.status)) {
+    router.push(`/products/${product.id}/edit`)
+    return
+  }
+
+  router.push(`/products/${product.id}/review`)
 }
 
 function formatDate(value) {
@@ -138,6 +161,12 @@ function statusClass(status) {
 .status-badge.danger {
   background: #fee2e2;
   color: #991b1b;
+}
+.product-row {
+  cursor: pointer;
+}
+.product-row:hover {
+  background: #f8fafc;
 }
 .state {
   padding: 1rem 0;
