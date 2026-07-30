@@ -3,7 +3,7 @@
     <h2>Étape 3 - Conformité</h2>
 
     <form class="step-form" @submit.prevent="emitNext">
-      <FormField id="lotNumber" :modelValue="formData.lotNumber" label="Numéro de lot" :required="true" :error="errors.lotNumber" @update:modelValue="value => updateField('lotNumber', value)" />
+      <FormField id="lot" :modelValue="formData.lot" label="Numéro de lot" :required="true" :error="errors.lot" @update:modelValue="value => updateField('lot', value)" />
       <FormField id="certification" :modelValue="formData.certification" label="Certification" @update:modelValue="value => updateField('certification', value)" />
       <FormField id="comment" :modelValue="formData.comment" label="Commentaire" type="textarea" :maxlength="1000" :rows="4" :error="errors.comment" @update:modelValue="value => updateField('comment', value)" />
 

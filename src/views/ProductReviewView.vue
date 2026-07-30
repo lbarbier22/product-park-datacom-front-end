@@ -3,6 +3,13 @@
     <h1>Revue du produit</h1>
 
     <div v-if="loading" class="state">Chargement…</div>
+    <NotFoundMessage
+      v-else-if="notFound"
+      title="Produit introuvable"
+      message="Ce produit n'existe pas ou a été supprimé."
+      to="/products"
+      link-label="Retour à la liste des produits"
+    />
     <div v-else-if="loadError" class="state error">{{ loadError }}</div>
 
     <template v-else>
@@ -11,7 +18,7 @@
         <span class="status-badge" :class="statusClass(product.status)">{{ product.status }}</span>
       </div>
 
-      <RejectionBanner v-if="product.rejectionReason" :rejectionReason="product.rejectionReason" />
+      <RejectionBanner v-if="product.rejectionReason" :reason="product.rejectionReason" />
 
       <!-- US-06.1: récap en lecture seule, aucun champ éditable -->
       <div class="step-card">
@@ -20,10 +27,10 @@
           <div class="summary-item"><strong>Référence :</strong> {{ product.reference }}</div>
           <div class="summary-item"><strong>Description :</strong> {{ product.description || '-' }}</div>
           <div class="summary-item"><strong>Catégorie :</strong> {{ product.category }}</div>
-          <div class="summary-item"><strong>Sous-catégorie :</strong> {{ product.subCategory || '-' }}</div>
+          <div class="summary-item"><strong>Sous-catégorie :</strong> {{ product.subcategory || '-' }}</div>
           <div class="summary-item"><strong>Fabricant :</strong> {{ product.manufacturer }}</div>
           <div class="summary-item"><strong>Pays :</strong> {{ product.country }}</div>
-          <div class="summary-item"><strong>Numéro de lot :</strong> {{ product.lotNumber }}</div>
+          <div class="summary-item"><strong>Numéro de lot :</strong> {{ product.lot }}</div>
           <div class="summary-item"><strong>Certification :</strong> {{ product.certification || '-' }}</div>
           <div class="summary-item"><strong>Commentaire :</strong> {{ product.comment || '-' }}</div>
           <div class="summary-item"><strong>Créé par :</strong> {{ product.createdBy || '-' }}</div>
@@ -77,6 +84,7 @@ import { getProduct, validateProduct, rejectProduct } from '../services/api'
 import { useAuthStore } from '../stores/auth.store'
 import { useUiStore } from '../stores/ui.store'
 import RejectionBanner from '../components/RejectionBanner.vue'
+import NotFoundMessage from '../components/NotFoundMessage.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -87,6 +95,7 @@ const productId = computed(() => route.params.id)
 
 const loading = ref(true)
 const loadError = ref('')
+const notFound = ref(false)
 const product = ref({})
 
 const isSubmitting = ref(false)
@@ -125,12 +134,17 @@ function formatDate(value) {
 async function fetchProduct() {
   loading.value = true
   loadError.value = ''
+  notFound.value = false
   try {
     const response = await getProduct(productId.value)
     product.value = response?.data || {}
   } catch (error) {
-    loadError.value =
-      error?.response?.data?.message || 'Impossible de récupérer ce produit.'
+    if (error?.response?.status === 404) {
+      notFound.value = true
+    } else {
+      loadError.value =
+        error?.response?.data?.message || 'Impossible de récupérer ce produit.'
+    }
   } finally {
     loading.value = false
   }

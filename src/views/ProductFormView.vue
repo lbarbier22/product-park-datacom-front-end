@@ -1,18 +1,29 @@
 <template>
   <section class="product-form-view">
     <h1>Formulaire produit</h1>
-    <RejectionBanner :rejectionReason="rejectionReason" />
-    <StepIndicator :current-step="currentStep" />
 
-    <component
-      :is="currentStepComponent"
-      :form-data="formData"
-      :errors="errors"
-      :is-submitting="isSubmitting"
-      @update="updateForm"
-      @next="goNext"
-      @submit="submitProduct"
+    <NotFoundMessage
+      v-if="notFound"
+      title="Produit introuvable"
+      message="Ce produit n'existe pas ou a été supprimé."
+      to="/products"
+      link-label="Retour à la liste des produits"
     />
+
+    <template v-else>
+      <RejectionBanner :reason="rejectionReason" />
+      <StepIndicator :current-step="currentStep" />
+
+      <component
+        :is="currentStepComponent"
+        :form-data="formData"
+        :errors="errors"
+        :is-submitting="isSubmitting"
+        @update="updateForm"
+        @next="goNext"
+        @submit="submitProduct"
+      />
+    </template>
   </section>
 </template>
 
@@ -21,6 +32,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import StepIndicator from '../components/StepIndicator.vue'
 import RejectionBanner from '../components/RejectionBanner.vue'
+import NotFoundMessage from '../components/NotFoundMessage.vue'
 import ProductStep1 from '../components/ProductStep1.vue'
 import ProductStep2 from '../components/ProductStep2.vue'
 import ProductStep3 from '../components/ProductStep3.vue'
@@ -41,10 +53,10 @@ const formData = ref({
   reference: '',
   description: '',
   category: '',
-  subCategory: '',
+  subcategory: '',
   manufacturer: '',
   country: '',
-  lotNumber: '',
+  lot: '',
   certification: '',
   comment: '',
 })
@@ -53,6 +65,7 @@ const isSubmitting = ref(false)
 // Motif de refus renvoyé par l'API tant que le produit n'a pas été re-soumis
 // (le backend ne le vide qu'après la re-soumission du step 4)
 const rejectionReason = ref('')
+const notFound = ref(false)
 
 const currentStepComponent = computed(() => {
   switch (currentStep.value) {
@@ -147,7 +160,11 @@ onMounted(async () => {
       currentStep.value = Number(data.currentStep || 1)
     }
   } catch (error) {
-    currentStep.value = 1
+    if (error?.response?.status === 404) {
+      notFound.value = true
+    } else {
+      currentStep.value = 1
+    }
   }
 })
 </script>

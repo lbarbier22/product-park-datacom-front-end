@@ -37,6 +37,11 @@ export const routes = [
     component: () => import('../views/ProductReviewView.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('../views/NotFoundView.vue'),
+  },
 ]
 
 export function createAppRouter() {
