@@ -8,7 +8,6 @@ const auth = useAuthStore()
 const router = useRouter()
 
 const isAuthenticated = computed(() => auth.isAuthenticated)
-const userName = computed(() => [auth.firstname, auth.lastname].filter(Boolean).join(' ') || auth.login)
 
 async function createNewProduct() {
   try {
@@ -36,7 +35,6 @@ function logout() {
   <header class="app-header">
     <div class="brand-block">
       <h1>DATACOM Frontend</h1>
-      <p v-if="isAuthenticated">Bonjour {{ userName }}</p>
     </div>
 
     <nav class="nav-links">
