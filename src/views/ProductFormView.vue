@@ -152,8 +152,4 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.product-form-view {
-  padding: 1.5rem;
-}
-</style>
+<style scoped src="../styles/ProductFormView.css"></style>

@@ -22,43 +22,4 @@ function getStepClass(step) {
 }
 </script>
 
-<style scoped>
-.step-indicator {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-.step-pill {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  border: 2px solid #cbd5e1;
-  color: #64748b;
-  background: #f8fafc;
-}
-.step-pill.past {
-  background: #dcfce7;
-  border-color: #22c55e;
-  color: #166534;
-}
-.step-pill.active {
-  background: #2563eb;
-  border-color: #2563eb;
-  color: #fff;
-}
-.step-pill.future {
-  background: #f8fafc;
-  color: #64748b;
-}
-.step-label {
-  margin-left: 0.25rem;
-  font-weight: 600;
-  color: #334155;
-}
-</style>
+<style scoped src="../styles/StepIndicator.css"></style>

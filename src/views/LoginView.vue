@@ -59,10 +59,4 @@ async function onSubmit() {
 }
 </script>
 
-<style scoped>
-.login-view { max-width: 420px; margin: 2rem auto; }
-.field { margin-bottom: 1rem; }
-label { display:block; margin-bottom: .25rem; }
-input { width:100%; padding:.5rem; box-sizing:border-box }
-button[disabled] { opacity: .6 }
-</style>
+<style scoped src="../styles/LoginView.css"></style>

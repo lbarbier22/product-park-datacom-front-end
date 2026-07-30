@@ -49,10 +49,4 @@ defineProps({
 defineEmits(['update:modelValue'])
 </script>
 
-<style scoped>
-.field { display: flex; flex-direction: column; gap: 0.3rem; }
-label { font-weight: 600; color: #334155; }
-input, textarea, select { padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px; }
-.required { color: #dc2626; }
-.error { color: #b91c1c; font-size: 0.9rem; }
-</style>
+<style scoped src="../styles/FormField.css"></style>
