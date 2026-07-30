@@ -5,7 +5,6 @@ import ProductStep3 from '../src/components/ProductStep3.vue'
 const baseFormData = {
   lot: '',
   certification: '',
-  comment: '',
 }
 
 describe('ProductStep3', () => {
@@ -18,16 +17,6 @@ describe('ProductStep3', () => {
     })
 
     expect(wrapper.text()).toContain('Le numéro de lot est obligatoire.')
-  })
-
-  it('emits update when the comment field changes', async () => {
-    const wrapper = mount(ProductStep3, {
-      props: { formData: baseFormData, errors: {} },
-    })
-
-    await wrapper.get('#comment').setValue('Note à destination du VALIDATOR')
-
-    expect(wrapper.emitted('update')[0][0]).toEqual({ comment: 'Note à destination du VALIDATOR' })
   })
 
   it('emits next on form submission', async () => {

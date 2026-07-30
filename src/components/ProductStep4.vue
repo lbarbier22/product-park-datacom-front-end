@@ -12,7 +12,6 @@
       <div class="summary-item"><strong>Pays :</strong> {{ formData.country }}</div>
       <div class="summary-item"><strong>Numéro de lot :</strong> {{ formData.lot }}</div>
       <div class="summary-item"><strong>Certification :</strong> {{ formData.certification || '-' }}</div>
-      <div class="summary-item"><strong>Commentaire :</strong> {{ formData.comment || '-' }}</div>
     </div>
 
     <div v-if="errors.server" class="server-error">{{ errors.server }}</div>

@@ -82,13 +82,8 @@ describe('validateProductStep3', () => {
     expect(errors.lot).toBeDefined()
   })
 
-  it('rejects a comment longer than 1000 characters', () => {
-    const errors = validateProductStep3({ lot: 'LOT-1', comment: 'a'.repeat(1001) })
-    expect(errors.comment).toBeDefined()
-  })
-
   it('accepts a fully valid step 3 with optional fields empty', () => {
-    const errors = validateProductStep3({ lot: 'LOT-1', certification: '', comment: '' })
+    const errors = validateProductStep3({ lot: 'LOT-1', certification: ''})
     expect(errors).toEqual({})
   })
 })

@@ -58,7 +58,6 @@ const formData = ref({
   country: '',
   lot: '',
   certification: '',
-  comment: '',
 })
 const errors = ref({})
 const isSubmitting = ref(false)

@@ -32,7 +32,6 @@
           <div class="summary-item"><strong>Pays :</strong> {{ product.country }}</div>
           <div class="summary-item"><strong>Numéro de lot :</strong> {{ product.lot }}</div>
           <div class="summary-item"><strong>Certification :</strong> {{ product.certification || '-' }}</div>
-          <div class="summary-item"><strong>Commentaire :</strong> {{ product.comment || '-' }}</div>
           <div class="summary-item"><strong>Créé par :</strong> {{ product.createdBy || '-' }}</div>
           <div class="summary-item"><strong>Date de création :</strong> {{ formatDate(product.createdAt) }}</div>
         </div>
