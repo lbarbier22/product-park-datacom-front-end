@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.gitignore
+.vscode
+.idea
+__MACOSX
+*.log
+.env.local
+.env.development.local
