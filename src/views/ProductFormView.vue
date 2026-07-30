@@ -11,7 +11,7 @@
     />
 
     <template v-else>
-      <RejectionBanner :rejectionReason="rejectionReason" />
+      <RejectionBanner v-if="rejectionReason" :rejectionReason="rejectionReason" />
       <StepIndicator :current-step="currentStep" />
 
       <component
