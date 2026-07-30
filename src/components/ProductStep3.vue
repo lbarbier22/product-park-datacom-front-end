@@ -5,8 +5,6 @@
     <form class="step-form" @submit.prevent="emitNext">
       <FormField id="lot" :modelValue="formData.lot" label="Numéro de lot" :required="true" :error="errors.lot" @update:modelValue="value => updateField('lot', value)" />
       <FormField id="certification" :modelValue="formData.certification" label="Certification" @update:modelValue="value => updateField('certification', value)" />
-      <FormField id="comment" :modelValue="formData.comment" label="Commentaire" type="textarea" :maxlength="1000" :rows="4" :error="errors.comment" @update:modelValue="value => updateField('comment', value)" />
-
       <div v-if="errors.server" class="server-error">{{ errors.server }}</div>
       <button type="submit" :disabled="isSubmitting">Suivant</button>
     </form>

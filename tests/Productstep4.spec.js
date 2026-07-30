@@ -12,7 +12,6 @@ const formData = {
   country: 'France',
   lot: 'LOT-1',
   certification: '',
-  comment: '',
 }
 
 describe('ProductStep4', () => {

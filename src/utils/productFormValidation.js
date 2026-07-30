@@ -42,10 +42,5 @@ export function validateProductStep3(formData) {
   if (!formData.lot || formData.lot.trim().length === 0) {
     errors.lot = 'Le numéro de lot est obligatoire.'
   }
-
-  if (formData.comment && formData.comment.trim().length > 1000) {
-    errors.comment = 'Le commentaire ne doit pas dépasser 1000 caractères.'
-  }
-
   return errors
 }
