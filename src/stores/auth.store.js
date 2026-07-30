@@ -13,14 +13,16 @@ const decodeToken = (token) => {
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || '',
-    login: '',
+    username: '',
     firstname: '',
     lastname: '',
     role: '',
   }),
+
   getters: {
     isAuthenticated: (state) => !!state.token,
   },
+
   actions: {
     async login(credentials) {
       const response = await loginApi(credentials)
@@ -28,7 +30,7 @@ export const useAuthStore = defineStore('auth', {
       const token = payload.token || ''
 
       this.token = token
-      this.login = payload.login || ''
+      this.username = payload.login || ''
       this.firstname = payload.firstname || ''
       this.lastname = payload.lastname || ''
       this.role = payload.role || ''
@@ -42,27 +44,30 @@ export const useAuthStore = defineStore('auth', {
 
     logout() {
       this.token = ''
-      this.login = ''
+      this.username = ''
       this.firstname = ''
       this.lastname = ''
       this.role = ''
+
       localStorage.removeItem('token')
     },
 
     restoreFromLocalStorage() {
       const token = localStorage.getItem('token')
+
       if (!token) {
         return
       }
 
       const decoded = decodeToken(token)
+
       if (!decoded) {
         this.logout()
         return
       }
 
       this.token = token
-      this.login = decoded.sub || ''
+      this.username = decoded.sub || ''
       this.firstname = decoded.firstname || ''
       this.lastname = decoded.lastname || ''
       this.role = decoded.role || ''

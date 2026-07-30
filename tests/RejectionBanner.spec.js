@@ -10,14 +10,14 @@ describe('RejectionBanner', () => {
 
   it('does not render when reason is an empty string', () => {
     const wrapper = mount(RejectionBanner, {
-      props: { reason: '' },
+      props: { rejectionReason: '' },
     })
     expect(wrapper.find('.rejection-banner').exists()).toBe(false)
   })
 
   it('renders the rejection reason when provided', () => {
     const wrapper = mount(RejectionBanner, {
-      props: { reason: 'Numéro de lot invalide' },
+      props: { rejectionReason: 'Numéro de lot invalide' },
     })
 
     expect(wrapper.find('.rejection-banner').exists()).toBe(true)

@@ -18,7 +18,7 @@
         <span class="status-badge" :class="statusClass(product.status)">{{ product.status }}</span>
       </div>
 
-      <RejectionBanner v-if="product.rejectionReason" :reason="product.rejectionReason" />
+      <RejectionBanner v-if="product.rejectionReason" :rejectionReason="product.rejectionReason" />
 
       <!-- US-06.1: récap en lecture seule, aucun champ éditable -->
       <div class="step-card">
