@@ -1,3 +1,33 @@
+<template>
+  <section class="product-form-view">
+    <h1>Formulaire produit</h1>
+
+    <NotFoundMessage
+      v-if="notFound"
+      title="Produit introuvable"
+      message="Ce produit n'existe pas ou a été supprimé."
+      to="/products"
+      link-label="Retour à la liste des produits"
+    />
+
+    <template v-else>
+      <RejectionBanner :rejectionReason="rejectionReason" />
+
+      <StepIndicator :current-step="currentStep" />
+
+      <component
+        :is="currentStepComponent"
+        :form-data="formData"
+        :errors="errors"
+        :is-submitting="isSubmitting"
+        @update="updateForm"
+        @next="goNext"
+        @submit="submitProduct"
+      />
+    </template>
+  </section>
+</template>
+
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
