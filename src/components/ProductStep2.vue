@@ -43,10 +43,4 @@ function emitNext() {
 }
 </script>
 
-<style scoped>
-.step-card { padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; }
-.step-form { display: flex; flex-direction: column; gap: 0.9rem; }
-button { align-self: flex-start; padding: 0.55rem 0.9rem; border: none; border-radius: 6px; background: #2563eb; color: #fff; cursor: pointer; }
-button[disabled] { opacity: 0.6; cursor: not-allowed; }
-.server-error { color: #b91c1c; font-size: 0.9rem; }
-</style>
+<style scoped src="../styles/ProductStep.css"></style>
