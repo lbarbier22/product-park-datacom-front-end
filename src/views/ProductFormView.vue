@@ -11,8 +11,7 @@
     />
 
     <template v-else>
-      <RejectionBanner :rejectionReason="rejectionReason" />
-
+      <RejectionBanner v-if="rejectionReason" :rejectionReason="rejectionReason" />
       <StepIndicator :current-step="currentStep" />
 
       <component
@@ -47,11 +46,8 @@ import {
 
 const route = useRoute()
 const router = useRouter()
-
 const productId = computed(() => route.params.id)
-
 const currentStep = ref(1)
-
 const formData = ref({
   name: '',
   reference: '',
@@ -63,16 +59,10 @@ const formData = ref({
   lot: '',
   certification: '',
 })
-
-/**
- * Copie des données reçues depuis l'API.
- * Permet de savoir si l'utilisateur a réellement modifié quelque chose.
- */
-const initialFormData = ref(null)
-
 const errors = ref({})
 const isSubmitting = ref(false)
-
+// Motif de refus renvoyé par l'API tant que le produit n'a pas été re-soumis
+// (le backend ne le vide qu'après la re-soumission du step 4)
 const rejectionReason = ref('')
 const notFound = ref(false)
 
@@ -112,53 +102,23 @@ function validateStep3() {
   return Object.keys(nextErrors).length === 0
 }
 
-/**
- * Vérifie si le formulaire a changé depuis le chargement.
- */
-function hasFormChanged() {
-  return (
-    JSON.stringify(formData.value) !==
-    JSON.stringify(initialFormData.value)
-  )
-}
-
 async function goNext() {
   if (isSubmitting.value) return
 
   let valid = false
-
   if (currentStep.value === 1) valid = validateStep1()
   if (currentStep.value === 2) valid = validateStep2()
   if (currentStep.value === 3) valid = validateStep3()
 
   if (!valid) return
 
-  /**
-   * Pas de modification :
-   * on passe directement à l'étape suivante sans PUT.
-   */
-  if (!hasFormChanged()) {
-    currentStep.value += 1
-    return
-  }
-
   isSubmitting.value = true
-
   try {
-    await api.put(
-      `/products/${productId.value}/step/${currentStep.value}?next=true`,
-      formData.value
-    )
-
-    // On mémorise la nouvelle version après sauvegarde
-    initialFormData.value = structuredClone(formData.value)
-
+    await api.put(`/products/${productId.value}/step/${currentStep.value}?next=true`, formData.value)
     currentStep.value += 1
   } catch (error) {
     errors.value = {
-      server:
-        error?.response?.data?.message ||
-        'Une erreur est survenue lors de la sauvegarde.',
+      server: error?.response?.data?.message || 'Une erreur est survenue lors de la sauvegarde.',
     }
   } finally {
     isSubmitting.value = false
@@ -167,26 +127,13 @@ async function goNext() {
 
 async function submitProduct() {
   if (isSubmitting.value) return
-
   isSubmitting.value = true
-
   try {
-    await api.put(
-      `/products/${productId.value}/step/4?next=true`,
-      formData.value
-    )
-
-    router.push({
-      path: '/products',
-      query: {
-        message: 'Produit soumis pour validation',
-      },
-    })
+    await api.put(`/products/${productId.value}/step/4?next=true`, formData.value)
+    router.push({ path: '/products', query: { message: 'Produit soumis pour validation' } })
   } catch (error) {
     errors.value = {
-      server:
-        error?.response?.data?.message ||
-        'Une erreur est survenue lors de la soumission.',
+      server: error?.response?.data?.message || 'Une erreur est survenue lors de la soumission.',
     }
   } finally {
     isSubmitting.value = false
@@ -197,15 +144,10 @@ onMounted(async () => {
   try {
     const response = await api.get(`/products/${productId.value}`)
     const data = response?.data || {}
-
     formData.value = {
       ...formData.value,
       ...data,
     }
-
-    // Sauvegarde de l'état initial
-    initialFormData.value = structuredClone(formData.value)
-
     rejectionReason.value = data.rejectionReason || ''
 
     if (data.status === 'REJECTED') {
@@ -222,3 +164,5 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style scoped src="../styles/ProductFormView.css"></style>
