@@ -7,10 +7,10 @@
       <div class="summary-item"><strong>Référence :</strong> {{ formData.reference }}</div>
       <div class="summary-item"><strong>Description :</strong> {{ formData.description || '-' }}</div>
       <div class="summary-item"><strong>Catégorie :</strong> {{ formData.category }}</div>
-      <div class="summary-item"><strong>Sous-catégorie :</strong> {{ formData.subCategory || '-' }}</div>
+      <div class="summary-item"><strong>Sous-catégorie :</strong> {{ formData.subcategory || '-' }}</div>
       <div class="summary-item"><strong>Fabricant :</strong> {{ formData.manufacturer }}</div>
       <div class="summary-item"><strong>Pays :</strong> {{ formData.country }}</div>
-      <div class="summary-item"><strong>Numéro de lot :</strong> {{ formData.lotNumber }}</div>
+      <div class="summary-item"><strong>Numéro de lot :</strong> {{ formData.lot }}</div>
       <div class="summary-item"><strong>Certification :</strong> {{ formData.certification || '-' }}</div>
       <div class="summary-item"><strong>Commentaire :</strong> {{ formData.comment || '-' }}</div>
     </div>

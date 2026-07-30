@@ -1,5 +1,5 @@
 <template>
-  <div v-if="reason" class="rejection-banner" role="alert">
+  <div v-if="rejectionReason" class="rejection-banner" role="alert">
     <span class="rejection-icon" aria-hidden="true">⚠</span>
     <span class="rejection-text">Produit refusé - motif : {{ rejectionReason }}</span>
   </div>

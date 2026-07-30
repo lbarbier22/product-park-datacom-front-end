@@ -27,4 +27,13 @@ describe('router guards', () => {
 
     expect(router.currentRoute.value.path).toBe('/products')
   })
+
+  it('resolves an unknown URL to the not-found route (US-08.2)', async () => {
+    const router = createAppRouter()
+
+    await router.push('/this/route/does/not/exist')
+    await router.isReady()
+
+    expect(router.currentRoute.value.name).toBe('not-found')
+  })
 })

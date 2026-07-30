@@ -4,7 +4,7 @@
 
     <form class="step-form" @submit.prevent="emitNext">
       <FormField id="category" :modelValue="formData.category" label="Catégorie" :required="true" :error="errors.category" @update:modelValue="value => updateField('category', value)" />
-      <FormField id="subCategory" :modelValue="formData.subCategory" label="Sous-catégorie" @update:modelValue="value => updateField('subCategory', value)" />
+      <FormField id="subcategory" :modelValue="formData.subcategory" label="Sous-catégorie" @update:modelValue="value => updateField('subcategory', value)" />
       <FormField id="manufacturer" :modelValue="formData.manufacturer" label="Fabricant" :required="true" :maxlength="150" :error="errors.manufacturer" @update:modelValue="value => updateField('manufacturer', value)" />
       <FormField id="country" :modelValue="formData.country" label="Pays" type="select" :required="true" :options="countryOptions" :error="errors.country" @update:modelValue="value => updateField('country', value)" />
 
