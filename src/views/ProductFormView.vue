@@ -1,7 +1,7 @@
 <template>
   <section class="product-form-view">
     <h1>Formulaire produit</h1>
-    <RejectionBanner :reason="rejectionReason" />
+    <RejectionBanner :rejectionReason="rejectionReason" />
     <StepIndicator :current-step="currentStep" />
 
     <component
